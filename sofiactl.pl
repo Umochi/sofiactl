@@ -1892,6 +1892,70 @@ elsif ( $cfgCmd eq "OPMonitor" ) {
 
     }
 
+}elsif ($cfgCmd eq 'OPPTZControlContinue') { #update for continuose movement
+
+    # DirectionRight, DirectionLeft, DirectionUp, DirectionDown, 
+    # ZoomWide, ZoomTile, IrisLarge, IrisSmall, FocusNear, FocusFar
+    my $ptzDirection = $cfgSetData; 
+
+    foreach my $i (65535) {
+        $decoded = $dvr->PrepareGenericCommand( IPcam::PTZ_REQ, {
+            Name => "OPPTZControl",
+            OPPTZControl =>  {
+                Command => $ptzDirection,
+                Parameter => {
+                    AUX => {
+                        Number => 0,
+                        Status => "On"
+                    },
+                    Channel => int($cfgChannel),
+                    MenuOpts => "Enter",
+                    POINT => { "bottom" => 0, "left" => 0, "right" => 0, "top" => 0 },
+                    Pattern => "SetBegin",
+                    Preset => $i, # Preset: 65535 - start movement; -1 - stop movement
+                    Step => 5,
+                    Tour => 0
+                }
+            }
+        });
+    }
+
+    if ( $decoded->{'Ret'} eq "100" ) {
+        print "PTZ success\n";
+    }
+
+}elsif ($cfgCmd eq 'OPPTZControlStop') { #update for continuose movement
+
+    # DirectionRight, DirectionLeft, DirectionUp, DirectionDown, 
+    # ZoomWide, ZoomTile, IrisLarge, IrisSmall, FocusNear, FocusFar
+    my $ptzDirection = $cfgSetData; 
+
+    foreach my $i (-1) {
+        $decoded = $dvr->PrepareGenericCommand( IPcam::PTZ_REQ, {
+            Name => "OPPTZControl",
+            OPPTZControl =>  {
+                Command => $ptzDirection,
+                Parameter => {
+                    AUX => {
+                        Number => 0,
+                        Status => "On"
+                    },
+                    Channel => int($cfgChannel),
+                    MenuOpts => "Enter",
+                    POINT => { "bottom" => 0, "left" => 0, "right" => 0, "top" => 0 },
+                    Pattern => "SetBegin",
+                    Preset => $i, # Preset: 65535 - start movement; -1 - stop movement
+                    Step => 5,
+                    Tour => 0
+                }
+            }
+        });
+    }
+
+    if ( $decoded->{'Ret'} eq "100" ) {
+        print "PTZ success\n";
+    }
+
 } elsif ($cfgCmd eq 'OPPTZControl') {
 
     # DirectionRight, DirectionLeft, DirectionUp, DirectionDown, 
